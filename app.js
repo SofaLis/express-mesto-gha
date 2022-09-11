@@ -18,6 +18,14 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(cardRoutes);
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '421hd7f8954tg5a51c2ab23g', // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
