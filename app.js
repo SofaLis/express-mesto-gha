@@ -13,17 +13,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use(express.json());
-
-app.use(userRoutes);
-app.use(cardRoutes);
-
-app.use((req, next) => {
+app.use((req, res, next) => {
   req.user = {
     _id: '63204f62bcaee3f0148d43ca',
   };
+
   next();
 });
+
+app.use(userRoutes);
+app.use(cardRoutes);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
