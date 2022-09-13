@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const userRoutes = require('./routes/user');
-const cardRoutes = require('./routes/card');
+const userRoutes = require('./routes/users');
+const cardRoutes = require('./routes/cards');
 
 const { PORT = 3000 } = process.env;
 
@@ -18,11 +18,10 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(cardRoutes);
 
-app.use((req, res, next) => {
+app.use((req, next) => {
   req.user = {
-    _id: '5d8b8592978f8bd833ca8133', // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '63204f62bcaee3f0148d43ca',
   };
-
   next();
 });
 
