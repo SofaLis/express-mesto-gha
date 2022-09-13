@@ -6,7 +6,7 @@ const ERROR_DEFAUT = 500;
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send.send(cards))
+    .then((cards) => res.status(200).send(cards))
     .catch(() => res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' }));
 };
 
@@ -15,7 +15,7 @@ module.exports.createCard = (req, res) => {
   const ownerId = req.user._id;
 
   Card.create({ name, link, owner: ownerId })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE).send({ message: 'Некорректные данные' });

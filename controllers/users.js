@@ -6,7 +6,7 @@ const ERROR_DEFAUT = 500;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send.send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch(() => res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' }));
 };
 
@@ -17,7 +17,7 @@ module.exports.getUserId = (req, res) => {
         res.status(ERROR_USER).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.send.send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.path === '_id') {
