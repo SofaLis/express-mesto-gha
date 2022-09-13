@@ -47,7 +47,7 @@ module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        return res.send.send({ data: user });
+        return res.status(200).send({ data: user });
       }
       return res.status(ERROR_USER).send({ message: 'Пользователь не найден' });
     })
@@ -65,7 +65,7 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        res.send.send({ data: user });
+        res.status(200).send({ data: user });
       } else {
         res.status(ERROR_USER).send({ message: 'Пользователь не найден' });
       }
