@@ -1,12 +1,13 @@
 const Card = require('../models/card');
-
-const ERROR_CODE = 400;
-const ERROR_USER = 404;
-const ERROR_DEFAUT = 500;
+const {
+  ERROR_CODE,
+  ERROR_USER,
+  ERROR_DEFAUT,
+} = require('../err/err');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.send(cards))
     .catch(() => res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' }));
 };
 
@@ -27,7 +28,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
-        res.status(200).send(card);
+        res.send(card);
       } else {
         res.status(ERROR_USER).send({ message: 'Карточка не найдена' });
       }
@@ -48,7 +49,7 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.status(200).send(card);
+        res.send(card);
       } else {
         res.status(ERROR_USER).send({ message: 'Карточка не найдена' });
       }
@@ -69,7 +70,7 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.status(200).send(card);
+        res.send(card);
       } else {
         res.status(ERROR_USER).send({ message: 'Карточка не найдена' });
       }

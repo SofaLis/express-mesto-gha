@@ -1,12 +1,14 @@
 const User = require('../models/user');
 
-const ERROR_CODE = 400;
-const ERROR_USER = 404;
-const ERROR_DEFAUT = 500;
+const {
+  ERROR_CODE,
+  ERROR_USER,
+  ERROR_DEFAUT,
+} = require('../err/err');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch(() => res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' }));
 };
 
@@ -17,10 +19,10 @@ module.exports.getUserId = (req, res) => {
         res.status(ERROR_USER).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
-      if (err.path === '_id') {
+      if (err.name === 'CastError') {
         res.status(ERROR_CODE).send({ message: 'Некорректные данные' });
       } else {
         res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' });
@@ -47,7 +49,7 @@ module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        return res.status(200).send({ data: user });
+        return res.send({ data: user });
       }
       return res.status(ERROR_USER).send({ message: 'Пользователь не найден' });
     })
@@ -65,7 +67,7 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        res.status(200).send({ data: user });
+        res.send({ data: user });
       } else {
         res.status(ERROR_USER).send({ message: 'Пользователь не найден' });
       }
