@@ -90,24 +90,10 @@ module.exports.updateAvatar = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-
-  User.findOne({ email }).select('+password')
-    .then((user) => {
-      if (!user) {
-        res.status(401).send({ message: 'Необходима авторизация' });
-        return;
-      }
-      bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            return res.status(401).send({ message: 'Необходима авторизация' });
-          }
-          return user;
-        });
-    })
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { httpOnly: true, sameSite: true }).send({ message: 'Авторизация прошла успешно!' });
+      res.send({ token });
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
