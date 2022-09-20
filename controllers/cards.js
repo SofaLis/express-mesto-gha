@@ -24,21 +24,21 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .then((card) => {
-      if (card) {
-        res.send(card);
-      } else {
+      if (!card) {
         res.status(ERROR_USER).send({ message: 'Карточка не найдена' });
       }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Некорректные данные' });
+
+      if (req.user._id !== card.owner.toString()) {
+        res.status(403).send({ message: 'Карточка не найдена' });
       }
-      return res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' });
-    });
+      Card.findByIdAndRemove(req.params.cardId)
+        .then(() => res.status(200).send({ message: 'Карточка удалена' }))
+        .catch(next);
+    })
+    .catch((err) => next(err));
 };
 
 module.exports.likeCard = (req, res) => {

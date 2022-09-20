@@ -1,28 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
+const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+app.use(cookieParser());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '63204f62bcaee3f0148d43ca',
-  };
+app.post('/signup', createUser);
 
-  next();
-});
+app.post('/signin', login);
 
-app.use(userRoutes);
-app.use(cardRoutes);
+app.use(auth, userRoutes);
+app.use(auth, cardRoutes);
 
 app.use((req, res, next) => {
   res.status(404).send({ message: 'Простите, страница не найдена' });
