@@ -1,14 +1,15 @@
 const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 const {
   getUsers, getUserId, updateAvatar, updateUser, getUsersMe,
 } = require('../controllers/users');
-const { celebrate, Joi } = require('celebrate');
+
 const regular = /(https?:\/\/)([www.]?[a-zA-Z0-9-]+\.)([^\s]{2,})/;
 
 router.get('/users', getUsers);
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().hex().length(24).required(),
+    userId: Joi.string().required().hex().length(24),
   }),
 }), getUserId);
 

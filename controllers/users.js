@@ -37,17 +37,29 @@ module.exports.createUser = (req, res) => {
     name, about, avatar, email,
   } = req.body;
   bcrypt.hash(req.body.password, 10)
-    .then((hash) => {
-      User.create({
+    .then((hash) => User.create(
+      {
         name, about, avatar, email, password: hash,
-      })
-        .then((user) => res.send({ data: user }))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            return res.status(ERROR_CODE).send({ message: 'Некорректные данные' });
-          }
-          return res.status(ERROR_DEFAUT).send({ message: 'Произошла ошибка' });
+      },
+    ))
+    .then((user) => res.status(201).send({
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      password: user.password,
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE).send({
+          message: 'Некорректные данные',
         });
+        return;
+      }
+      res.status(ERROR_DEFAUT).send({
+        message: 'Произошла ошибка',
+      });
     });
 };
 
@@ -90,10 +102,12 @@ module.exports.updateAvatar = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  User.findUserByCredentials(email, password)
+
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.send({ token });
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
+      });
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
