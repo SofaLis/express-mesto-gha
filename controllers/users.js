@@ -110,9 +110,8 @@ module.exports.login = (req, res, next) => {
       });
       res.send({ token });
     })
-    .catch((err) => {
-      // next(new Unauthorized('Неверно введен пароль или почта'));
-      next(err);
+    .catch(() => {
+      next(new Unauthorized('Неверно введен пароль или почта'));
     });
 };
 

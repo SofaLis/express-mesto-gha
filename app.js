@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const {
-  celebrate, Joi,
+  celebrate, Joi, errors,
 } = require('celebrate');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -38,15 +39,15 @@ app.post('/signin', celebrate({
   }),
 }), login);
 
-app.use(auth);
-
-app.use(userRoutes);
-app.use(cardRoutes);
+app.use('/users', auth, userRoutes);
+app.use('/cards', cardRoutes);
 
 app.use((req, res, next) => {
   res.status(404).send({ message: 'Простите, страница не найдена' });
   next();
 });
+
+app.use(errors());
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
