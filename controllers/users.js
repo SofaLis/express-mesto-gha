@@ -118,15 +118,9 @@ module.exports.getUsersMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFound({ message: 'Пользователь не найден' });
-      } else {
-        res.status(200).send(user);
+        throw new NotFound('Пользователь не найден');
       }
+      res.send({ data: user });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequest('Проверьте введенные данные'));
-      }
-      next(err);
-    });
+    .catch(next);
 };
