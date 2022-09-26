@@ -9,18 +9,21 @@ const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const NotFound = require('./err/NotFound');
 
 const regular = /(https?:\/\/)([www.]?[a-zA-Z0-9-]+\.)([^\s]{2,})/;
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
+});
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -40,11 +43,10 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use('/users', auth, userRoutes);
-app.use('/cards', cardRoutes);
+app.use('/cards', auth, cardRoutes);
 
 app.use((req, res, next) => {
-  res.status(404).send({ message: 'Простите, страница не найдена' });
-  next();
+  next(new NotFound('Простите, страница не найдена'));
 });
 
 app.use(errors());
