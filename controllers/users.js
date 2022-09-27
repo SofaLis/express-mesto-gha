@@ -32,6 +32,17 @@ module.exports.getUserId = (req, res, next) => {
     });
 };
 
+module.exports.getUsersMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFound('Пользователь не найден');
+      }
+      res.send({ data: user });
+    })
+    .catch(next);
+};
+
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
@@ -107,6 +118,10 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
         expiresIn: '7d',
       });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+      });
       res.send({ token });
     })
     .catch(() => {
@@ -114,13 +129,3 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.getUsersMe = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFound('Пользователь не найден');
-      }
-      res.send({ data: user });
-    })
-    .catch(next);
-};
