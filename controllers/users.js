@@ -114,7 +114,7 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.getMe = (req, res, next) => {
+module.exports.getUsersMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
