@@ -128,4 +128,3 @@ module.exports.login = (req, res, next) => {
       next(new Unauthorized('Неверно введен пароль или почта'));
     });
 };
-
