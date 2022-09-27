@@ -120,7 +120,6 @@ module.exports.getUsersMe = (req, res, next) => {
       if (!user) {
         throw new NotFound('Пользователь не найден');
       }
-      consol.log(req.user._id)
       res.send({ data: user });
     })
     .catch(next);
